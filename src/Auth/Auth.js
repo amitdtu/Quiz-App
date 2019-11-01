@@ -1,17 +1,9 @@
 import React, { useState } from 'react';
 import { Input, Label, FormGroup, Button, Form, Row, Col } from 'reactstrap';
+import config from '../config';
 const firebase = require('firebase');
 
-var firebaseConfig = {
-    apiKey: "AIzaSyBr5sPPAzjTxZD2Lkg10nh7gXLAz_Ub1NM",
-    authDomain: "quiz-game-2cd9a.firebaseapp.com",
-    databaseURL: "https://quiz-game-2cd9a.firebaseio.com",
-    projectId: "quiz-game-2cd9a",
-    storageBucket: "quiz-game-2cd9a.appspot.com",
-    messagingSenderId: "230059905274",
-    appId: "1:230059905274:web:9cd542e9dfa2511bceb943",
-    measurementId: "G-Q2574W7JDV"
-};
+var firebaseConfig = config;
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
