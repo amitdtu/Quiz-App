@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Input, Label, FormGroup, Button, Form, Row, Col } from 'reactstrap';
 import config from '../config';
+import { withRouter } from 'react-router-dom';
+
 const firebase = require('firebase');
 
 var firebaseConfig = config;
@@ -13,6 +15,7 @@ const Auth = (props) => {
     const [email, setEmail] = useState(null);
     const [password, setPassword] = useState(null);
     const [msg, setMsg] = useState(null);
+    // const [isAuth, setIsAuth] = useState(false);
 
     const signUpHandler = () => {
         const auth = firebase.auth();
@@ -20,14 +23,15 @@ const Auth = (props) => {
             .then(response => {
                 setMsg("Hi " + response.user.email + " Sign Up successfully. Login to play the game.");
                 setMsgNull();
-
             }).catch(error => {
                 setMsg(error.message);
                 setMsgNull();
             })
-
-
         resetForm();
+    }
+
+    const setQuizPath = () => {
+        props.history.replace("/quiz")
     }
 
     const loginHandler = () => {
@@ -36,20 +40,21 @@ const Auth = (props) => {
         auth.signInWithEmailAndPassword(email, password)
             .then(response => {
                 setMsg("Hi " + response.user.email + " you are login now!!!");
-                props.isAuth(true)
-                setTimeout(() => {
-                    setMsg(null)
-                }, 3000);
+                setMsgNull();
+                // setIsAuth(true)
+                setQuizPath()
+
 
             })
             .catch(error => {
                 if (error.message === "There is no user record corresponding to this identifier. The user may have been deleted.") {
                     setMsg("First Sign Up, then try to login")
-                    setMsgNull();
                 } else {
+                    // console.log(error.message)
                     setMsg(error.message);
-                    setMsgNull();
                 }
+                // setIsAuth(false)
+                setMsgNull();
             })
         resetForm();
     }
@@ -94,4 +99,4 @@ const Auth = (props) => {
         </Form>
     )
 }
-export default Auth;
+export default withRouter(Auth);

@@ -1,6 +1,8 @@
 import React from 'react';
 import Auth from './Auth/Auth';
+import { Route, Switch } from 'react-router-dom';
 import './App.css';
+import Result from './Result/Reult';
 import Question from './Question/Question';
 
 
@@ -10,27 +12,30 @@ class App extends React.Component {
   state = {
     questions: null,
     number: 0,
-    isAuth: false
+    isAuth: false,
+    result: null
 
+  }
+
+  resultHandler = (resData) => {
+    this.setState({
+      result: resData
+    })
   }
 
   isAuth = (data) => {
     this.setState({ isAuth: data });
   }
 
-  componentDidMount() {
-    fetch(`https://opentdb.com/api.php?amount=10&category=18&difficulty=easy&type=multiple`)
-      .then(res => { return res.json() })
-      .then(data => {
-        this.setState({ questions: data.results })
-      })
-  }
-
-
   render() {
     return (
       <div>
-        {this.state.isAuth ? <Question questions={this.state.questions} /> : <Auth isAuth={this.isAuth} />}
+        <Switch>
+          <Route path="/quiz" render={() => <Question questions={this.state.questions}
+            result={this.resultHandler} />} />
+          <Route path="/result" render={() => <Result result={this.state.result} />} />
+          <Route path="/" exact render={() => <Auth />} />
+        </Switch>
       </div>
     );
   }

@@ -1,15 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Input, Label, FormGroup, Button } from 'reactstrap';
-import Result from '../Result/Reult';
+import { withRouter, } from 'react-router-dom';
 
 
 const Question = (props) => {
+    useEffect(() => {
+        fetch(`https://opentdb.com/api.php?amount=10&category=18&difficulty=easy&type=multiple`)
+            .then(res => { return res.json() })
+            .then(data => {
+                //   this.setState({ questions: data.results })
+                setQuestions(data.results);
+                setIsLoading(false);
+            })
+    }, []);
 
-    const questions = props.questions;
+    // const questions = props.questions;
+    const [questions, setQuestions] = useState(null)
     const [number, setNumber] = useState(0);
     const [tick, setTick] = useState(null);
-    const [res, setRes] = useState(0)
-    const [isComplete, setIsComplete] = useState(null)
+    const [res, setRes] = useState(0);
+    // const [isComplete, setIsComplete] = useState(null)
+    const [isLoading, setIsLoading] = useState(true)
 
 
     const getAnsHandler = (e) => {
@@ -23,7 +34,9 @@ const Question = (props) => {
         setTick(null)
         setNumber(number < 9 ? number + 1 : number);
         if (number === 9) {
-            setIsComplete("complete")
+            // setIsComplete(true);
+            props.result(res)
+            props.history.replace("/result")
         }
     }
 
@@ -39,28 +52,36 @@ const Question = (props) => {
 
 
 
-    if (isComplete !== "complete") {
-        const options = [...questions[number].incorrect_answers, questions[number].correct_answer];
-        return (
-            <div className="App" key={number}>
-                <h4>Q{number + 1} {questions[number].question}</h4>
-                <ul>
-                    {options.map((option, index) => (
-                        <FormGroup check key={index}>
-                            <Label check>
-                                <Input type="radio" value={option} onClick={getAnsHandler} name="radio1" />{' '}
-                                {option}
-                            </Label>
-                        </FormGroup>
-                    ))}
-                </ul>
 
-                <div className="d-flex justify-content-between">
-                    <Button color="dark" onClick={prevQuesHandler}>Previous</Button>
-                    <Button color="primary" className="text-white" onClick={nextQuesHandler} >Next</Button>
+    if (isLoading) {
+        return (<p className="text-white">Loading...</p>)
+    } else if (questions) {
+        const options = [...questions[number].incorrect_answers, questions[number].correct_answer]
+        return (
+            <React.Fragment>
+
+                <div className="App" key={number}>
+                    <h4>Q{number + 1} {questions[number].question}</h4>
+                    <ul>
+
+                        {options.map((option, index) => (
+                            <FormGroup check key={index}>
+                                <Label check>
+                                    <Input type="radio" value={option} onClick={getAnsHandler} name="radio1" />{' '}
+                                    {option}
+                                </Label>
+                            </FormGroup>
+                        ))}
+                    </ul>
+
+                    <div className="d-flex justify-content-between">
+                        <Button color="dark" onClick={prevQuesHandler}>Previous</Button>
+                        <Button color="primary" className="text-white" onClick={nextQuesHandler} >Next</Button>
+                    </div>
                 </div>
-            </div>
+            </React.Fragment>
         )
-    } else return <Result result={res} />
+    }
+
 }
-export default Question;
+export default withRouter(Question);
