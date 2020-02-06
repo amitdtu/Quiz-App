@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Input, Label, FormGroup, Button, Form, Row, Col } from 'reactstrap';
-import config from '../config';
+// import config from '../config';
 import { withRouter } from 'react-router-dom';
 
 const firebase = require('firebase');
